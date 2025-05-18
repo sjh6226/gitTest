@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>계산기 연습.ver1</title>
+</head>
+
+<body>
+  <div id="display">0</div>
+  <hr />
+  <div>
+    <button onclick="calc.inputNumber(1)">1</button>
+    <button onclick="calc.inputNumber(2)">2</button>
+    <button onclick="calc.inputNumber(3)">3</button><br />
+    <button onclick="calc.inputNumber(4)">4</button>
+    <button onclick="calc.inputNumber(5)">5</button>
+    <button onclick="calc.inputNumber(6)">6</button><br />
+    <button onclick="calc.inputNumber(7)">7</button>
+    <button onclick="calc.inputNumber(8)">8</button>
+    <button onclick="calc.inputNumber(9)">9</button><br /><br />
+
+    <button onclick="calc.setOperator('+')">+</button>
+    <button onclick="calc.setOperator('-')">-</button>
+    <button onclick="calc.setOperator('*')">X</button>
+    <button onclick="calc.setOperator('/')">/</button>
+    <button onclick="calc.calculate()">=</button>
+    <button onclick="calc.reset()">초기화</button>
+  </div>
+
+  <script>
+    class Calculator {
+      constructor(displayElement) {
+        this.display = displayElement;
+        this.reset();
+      }
+
+      reset() {
+        this.current = '';
+        this.previous = '';
+        this.operator = '';
+        this.display.innerText = '0';
+      }
+
+      inputNumber(num) {
+        this.current += num.toString();
+        this.updateDisplay();
+      }
+
+      setOperator(op) {
+        if (this.current === '') return;
+
+        if (this.previous !== '' && this.operator !== '') {
+          this.calculate(); // 연속 계산 지원
+        }
+
+        this.operator = op;
+        this.previous = this.current;
+        this.current = '';
+        this.updateDisplay();
+      }
+
+      calculate() {
+        if (this.previous === '' || this.current === '' || this.operator === '') {
+          this.display.innerText = "입력이 부족함";
+          return;
+        }
+
+        const num1 = parseFloat(this.previous);
+        const num2 = parseFloat(this.current);
+        let result;
+
+        switch (this.operator) {
+          case '+': result = num1 + num2; break;
+          case '-': result = num1 - num2; break;
+          case '*': result = num1 * num2; break;
+          case '/': result = num2 === 0 ? '오류' : num1 / num2; break;
+        }
+
+        this.display.innerText = `${this.previous} ${this.operator} ${this.current} = ${result}`;
+        this.current = result.toString();
+        this.previous = '';
+        this.operator = '';
+      }
+
+      updateDisplay() {
+        if (this.operator === '') {
+          this.display.innerText = this.current || '0';
+        } else {
+          this.display.innerText = `${this.previous} ${this.operator} ${this.current}`;
+        }
+      }
+    }
+
+    // 상속 예제: 기능 추가 시 여기서 확장 가능
+    class AdvancedCalculator extends Calculator {
+      // 예: 로그, 제곱, 루트 등 추가 기능 작성 가능
+    }
+
+    const calc = new Calculator(document.getElementById("display"));
+  </script>
+</body>
+
+</html>
